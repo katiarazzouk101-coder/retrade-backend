@@ -56,4 +56,17 @@ class RegisterController extends BaseController
             return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
         } 
     }
+    
+    /**
+     * Log out the currently authenticated user.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(Request $request)
+    {
+        // Revoke the user's token
+        $request->user()->currentAccessToken()->delete();
+
+        return $this->sendResponse([], 'User logged out successfully.');
+    }
 }
