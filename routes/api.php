@@ -23,3 +23,8 @@ Route::middleware('auth.api:sanctum')->group( function () {
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth.api:sanctum');
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/products/{id}/like', [ProductController::class, 'like']);
+    Route::delete('/products/{id}/like', [ProductController::class, 'unlike']);
+});

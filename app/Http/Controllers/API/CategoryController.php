@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CategoryResource;
+use App\Http\Resources\category\CategoryListResource;
+use App\Http\Resources\category\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Validator;
@@ -19,7 +20,7 @@ class CategoryController extends BaseController
     {
         $category = Category::all();
     
-        return $this->sendResponse(CategoryResource::collection($category), 'Category retrieved successfully.');
+        return $this->sendResponse(CategoryListResource::collection($category), 'Category retrieved successfully.');
     }
 
     /**

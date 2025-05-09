@@ -14,4 +14,11 @@ class Category extends Model
     public function products(): HasMany{
         return $this->hasMany(Product::class);
     }
+
+    protected static function booted()
+{
+    static::deleting(function ($category) {
+        $category->products->each->delete(); // Soft delete or manual cascade
+    });
+}
 }

@@ -12,13 +12,21 @@ class BaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendResponse($result, $message)
+    public function sendResponse($result, $message, $pagenation=false, $object=null)
     {
         $response = [
             'success' => true,
             'data'    => $result,
             'message' => $message,
         ];
+        if($pagenation){
+            $response['pagination'] = [
+                'current_page' => $object->currentPage(),
+                'last_page'    => $object->lastPage(),
+                'per_page'     => $object->perPage(),
+                'total'        => $object->total(),
+            ];
+        }
   
         return response()->json($response, 200);
     }
