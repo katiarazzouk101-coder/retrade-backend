@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Product;
 use Validator;
-use App\Http\Resources\ProductResource;
+use App\Http\Resources\product\ProductListResource;
+use App\Http\Resources\product\ProductResource;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
-   
+use Illuminate\Validation\Rule;
+
 class ProductController extends BaseController
 {
     /**
@@ -17,11 +19,17 @@ class ProductController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $search = $request->input('search');
+
+        $products = Product::with(['category', 'likes'])
+        ->when($search, function ($query, $search) {
+            return $query->where('name', 'like', "%{$search}%")
+                         ->orWhere('detail', 'like', "%{$search}%");
+        })->paginate(10);
     
-        return $this->sendResponse(ProductResource::collection($products), 'Products retrieved successfully.');
+        return $this->sendResponse(ProductListResource::collection($products), 'Products retrieved successfully.', true, $products);
     }
 
     /**
@@ -38,7 +46,7 @@ class ProductController extends BaseController
             'name' => 'required',
             'detail' => 'required',
             'price' => 'required',
-            'category_id' => 'required'
+            'category_id' => ['required', 'integer', Rule::exists('categories', 'id')]
         ]);
    
         if($validator->fails()){
@@ -80,7 +88,8 @@ class ProductController extends BaseController
         $validator = Validator::make($input, [
             'name' => 'required',
             'detail' => 'required',
-            'price' => 'required'
+            'price' => 'required',
+            'category_id' => ['required', 'integer', Rule::exists('categories', 'id')]
         ]);
    
         if($validator->fails()){
@@ -90,6 +99,7 @@ class ProductController extends BaseController
         $product->name = $input['name'];
         $product->detail = $input['detail'];
         $product->price = $input['price'];
+        $product->category_id = $input['category_id'];
         $product->save();
    
         return $this->sendResponse(new ProductResource($product), 'Product updated successfully.');
@@ -106,5 +116,25 @@ class ProductController extends BaseController
         $product->delete();
    
         return $this->sendResponse([], 'Product deleted successfully.');
+    }
+
+    public function like(Request $request, $productId)
+    {
+        $product = Product::findOrFail($productId);
+
+        $like = $product->likes()->firstOrCreate([
+            'user_id' => auth()->id(),
+        ]);
+
+        return response()->json(['liked' => true]);
+    }
+
+    public function unlike(Request $request, $productId)
+    {
+        $product = Product::findOrFail($productId);
+
+        $product->likes()->where('user_id', auth()->id())->delete();
+
+        return response()->json(['liked' => false]);
     }
 }

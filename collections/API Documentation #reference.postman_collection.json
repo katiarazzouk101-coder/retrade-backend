@@ -378,6 +378,76 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "likes product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "4|LBhJoGLf6I7VvWw7ZkRMwj4fQmKOxsIOL5bhqdvYf3a0f447",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/products/2/like",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"products",
+								"2",
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unlike product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "4|LBhJoGLf6I7VvWw7ZkRMwj4fQmKOxsIOL5bhqdvYf3a0f447",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/products/2/like",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"products",
+								"2",
+								"like"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

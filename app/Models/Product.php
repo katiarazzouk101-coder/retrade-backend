@@ -22,4 +22,35 @@ class Product extends Model
     public function category(): BelongsTo{
         return $this->belongsTo(Category::class);
     }
+
+    public function getRelatedProducts()
+    {
+        $candidates = self::where('id', '!=', $this->id)->get();
+
+        $scored = $candidates->map(function ($item) {
+            $score = 0;
+
+            // 70 points for same category
+            if ($item->category_id === $this->category_id) {
+                $score += 70;
+            }
+
+            // 0–30 points for name similarity
+            similar_text($this->name, $item->name, $percent);
+            $score += ($percent * 0.3); // max 30 points
+
+            $item->similarity_score = $score;
+            return $item;
+        });
+
+        // Sort by score and return top 4 as array or resource
+        return $scored->sortByDesc('similarity_score')->take(4)->values()->map(function ($product) {
+            return $product;
+        });
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
 }
