@@ -1,18 +1,25 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Validator;
 
-class CartController extends Controller
+class CartController extends BaseController
 {
     public function addToCart(Request $request)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'product_id' => ['required', 'integer', Rule::exists('products', 'id')],
             'quantity'   => 'required|integer|min:1',
         ]);
+
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
 
         $user = auth()->user();
 
