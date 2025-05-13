@@ -1,26 +1,46 @@
 FROM php:8.2-apache
 
-# تثبيت المتطلبات
+# تثبيت مكتبات PHP المطلوبة
 RUN apt-get update && apt-get install -y \
-    libzip-dev unzip git curl libpng-dev libonig-dev libxml2-dev zip && \
-    docker-php-ext-install pdo pdo_mysql zip
+    git \
+    unzip \
+    libzip-dev \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    curl \
+    && docker-php-ext-install pdo pdo_mysql zip
 
 # تثبيت Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# نسخ ملفات المشروع
-COPY . /var/www/html/
-
-# تعيين صلاحيات
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
-
-# تشغيل Laravel
+# ضبط مجلد العمل
 WORKDIR /var/www/html
 
-RUN composer install \
-    && cp .env.example .env \
+# نسخ ملفات المشروع
+COPY . .
+
+# إعداد الصلاحيات
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
+
+# تثبيت الحزم باستخدام Composer
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+# نسخ .env وتوليد APP_KEY
+RUN cp .env.example .env \
     && php artisan key:generate
 
+# ✅ تنظيف الكاش ثم إعادة توليده (هنا تضيف السطر يلي بدك تشوفه)
+RUN php artisan config:clear \
+    && php artisan config:cache
+
+# ✅ لو عندك سكريبتات migration وبدك تنفذها تلقائيًا
+RUN php artisan migrate --force
+
+# فتح البورت 80
 EXPOSE 80
-CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=80"]
+
+# بدء Laravel باستخدام السيرفر الداخلي
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
