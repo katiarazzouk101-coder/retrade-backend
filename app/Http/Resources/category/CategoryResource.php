@@ -18,8 +18,8 @@ class CategoryResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'products' => ProductListResource::collection($this->whenLoaded('products')),
             'image_url' => $this->image ? asset('storage/' . $this->image) : null,
+            'products' => ProductListResource::collection($this->whenLoaded('products')),
             'created_at' => $this->created_at->format('d/m/Y'),
             'updated_at' => $this->updated_at->format('d/m/Y'),
         ];
