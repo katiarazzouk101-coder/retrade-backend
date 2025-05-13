@@ -14,14 +14,20 @@ Route::controller(RegisterController::class)->group(function(){
     Route::middleware('auth:sanctum')->post('logout', 'logout');
 });
 
+Route::middleware(['optional.auth'])->group(function () {
+    Route::get('products', [ProductController::class, 'index']);
+    Route::get('products/{product}', [ProductController::class, 'show']);
+    Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('categories/{category}', [CategoryController::class, 'show']);
+});
 
 Route::middleware('auth.api:sanctum')->group( function () {
-    Route::resource('products', ProductController::class);
-    Route::resource('categories', CategoryController::class);
+    Route::resource('products', ProductController::class)->except(['index', 'show']);
+    Route::resource('categories', CategoryController::class)->except(['index', 'show']);
 });
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+    return $request->user()->load('products');
 })->middleware('auth.api:sanctum');
 
 Route::middleware('auth.api:sanctum')->group(function () {

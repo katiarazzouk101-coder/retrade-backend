@@ -53,7 +53,7 @@ class ProductController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());       
         }
    
-        $product = Product::create($input);
+        $product = auth()->user()->products()->create($input);
         return $this->sendResponse(new ProductResource($product), 'Product created successfully.');
     } 
    
