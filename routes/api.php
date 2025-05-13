@@ -24,6 +24,8 @@ Route::middleware(['optional.auth'])->group(function () {
 Route::middleware('auth.api:sanctum')->group( function () {
     Route::resource('products', ProductController::class)->except(['index', 'show']);
     Route::resource('categories', CategoryController::class)->except(['index', 'show']);
+    Route::post('products/{product}/rate', [ProductController::class, 'rate']);
+
 });
 
 Route::get('/user', function (Request $request) {

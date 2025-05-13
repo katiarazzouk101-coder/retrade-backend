@@ -59,4 +59,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Product::class);
     }
+
+    public function ratedProducts()
+    {
+        return $this->belongsToMany(Product::class, 'product_user_rating')
+                    ->withPivot('rating')
+                    ->withTimestamps();
+    }
 }

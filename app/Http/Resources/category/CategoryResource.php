@@ -19,6 +19,7 @@ class CategoryResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'products' => ProductListResource::collection($this->whenLoaded('products')),
+            'image_url' => $this->image ? asset('storage/' . $this->image) : null,
             'created_at' => $this->created_at->format('d/m/Y'),
             'updated_at' => $this->updated_at->format('d/m/Y'),
         ];

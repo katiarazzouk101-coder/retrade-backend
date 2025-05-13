@@ -10,6 +10,7 @@ use App\Http\Resources\product\ProductListResource;
 use App\Http\Resources\product\ProductResource;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProductController extends BaseController
@@ -23,7 +24,7 @@ class ProductController extends BaseController
     {
         $search = $request->input('search');
 
-        $products = Product::with(['category', 'likes'])
+        $products = Product::with(['category', 'likes','ratings'])
         ->when($search, function ($query, $search) {
             return $query->where('name', 'like', "%{$search}%")
                          ->orWhere('detail', 'like', "%{$search}%");
@@ -46,7 +47,8 @@ class ProductController extends BaseController
             'name' => 'required',
             'detail' => 'required',
             'price' => 'required',
-            'category_id' => ['required', 'integer', Rule::exists('categories', 'id')]
+            'category_id' => ['required', 'integer', Rule::exists('categories', 'id')],
+            'images.*' => 'image|max:2048',
         ]);
    
         if($validator->fails()){
@@ -54,6 +56,13 @@ class ProductController extends BaseController
         }
    
         $product = auth()->user()->products()->create($input);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('products', 'public');
+                $product->images()->create(['path' => $path]);
+            }
+        }
         return $this->sendResponse(new ProductResource($product), 'Product created successfully.');
     } 
    
@@ -84,23 +93,32 @@ class ProductController extends BaseController
     public function update(Request $request, Product $product)
     {
         $input = $request->all();
-   
+
         $validator = Validator::make($input, [
             'name' => 'required',
             'detail' => 'required',
             'price' => 'required',
-            'category_id' => ['required', 'integer', Rule::exists('categories', 'id')]
+            'category_id' => ['required', 'integer', Rule::exists('categories', 'id')],
+            'images.*' => 'nullable|image|max:2048',
         ]);
    
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
    
-        $product->name = $input['name'];
-        $product->detail = $input['detail'];
-        $product->price = $input['price'];
-        $product->category_id = $input['category_id'];
-        $product->save();
+        $product->update($input);
+
+        if ($request->hasFile('images')) {
+            foreach ($product->images as $oldImage) {
+                Storage::disk('public')->delete($oldImage->path);
+                $oldImage->delete(); 
+            }
+        
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('products', 'public');
+                $product->images()->create(['path' => $path]);
+            }
+        }
    
         return $this->sendResponse(new ProductResource($product), 'Product updated successfully.');
     }
@@ -136,5 +154,26 @@ class ProductController extends BaseController
         $product->likes()->where('user_id', auth()->id())->delete();
 
         return response()->json(['liked' => false]);
+    }
+
+    public function rate(Request $request, Product $product)
+    {
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'rating' => 'required|numeric|in:0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5',
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+
+        $user = auth()->user();
+
+        // Update or create rating
+        $user->ratedProducts()->syncWithoutDetaching([
+            $product->id => ['rating' => $input['rating']]
+        ]);
+
+        return response()->json(['message' => 'Product rated successfully.']);
     }
 }

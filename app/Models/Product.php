@@ -58,4 +58,16 @@ class Product extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function ratings()
+    {
+        return $this->belongsToMany(User::class, 'product_user_rating')
+                    ->withPivot('rating')
+                    ->withTimestamps();
+    }
+
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
 }
