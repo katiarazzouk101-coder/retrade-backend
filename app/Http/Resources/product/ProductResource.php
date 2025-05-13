@@ -20,11 +20,16 @@ class ProductResource extends JsonResource
             'detail' => $this->detail,
             'price' => $this->price,
             'category' => $this->category ? $this->category->name : null,
-            'related_product' => ProductListResource::collection($this->getRelatedProducts()),
             'likes_count' => $this->likes()->count(),
             'is_liked'    => $this->likes->contains('user_id', auth()->id()),
+            'average_rating' => round($this->ratings()->avg('rating'), 1),
+            'user_rating' => auth()->check()
+            ? optional($this->ratings->firstWhere('id', auth()->id()))->pivot?->rating
+            : null,
+            'images' => $this->images->map(fn($img) => asset('storage/' . $img->path)),
             'created_at' => $this->created_at->format('d/m/Y'),
             'updated_at' => $this->updated_at->format('d/m/Y'),
+            'related_product' => ProductListResource::collection($this->getRelatedProducts()),
         ];
     }
 }

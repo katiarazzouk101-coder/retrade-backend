@@ -24,6 +24,11 @@ class ProductListResource extends JsonResource
             'is_liked'    => auth()->check() 
             ? $this->likes()->where('user_id', auth()->id())->exists() 
             : false,
+            'average_rating' => round($this->ratings()->avg('rating'), 1),
+            'user_rating' => auth()->check()
+            ? optional($this->ratings->firstWhere('id', auth()->id()))->pivot?->rating
+            : null,
+            'images' => $this->images->map(fn($img) => asset('storage/' . $img->path)),
         ];
     }
 }

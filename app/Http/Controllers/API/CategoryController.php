@@ -7,6 +7,7 @@ use App\Http\Resources\category\CategoryListResource;
 use App\Http\Resources\category\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Validator;
 
 class CategoryController extends BaseController
@@ -34,13 +35,19 @@ class CategoryController extends BaseController
         $input = $request->all();
    
         $validator = Validator::make($input, [
-            'name' => 'required'
+            'name' => 'required',
+            'image' => 'nullable|image|max:2048',
         ]);
-   
+        
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-   
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('categories', 'public');
+            $input['image'] = $path;
+        }
+
         $category = Category::create($input);
    
         return $this->sendResponse(new CategoryResource($category), 'Category created successfully.');
@@ -75,15 +82,25 @@ class CategoryController extends BaseController
         $input = $request->all();
    
         $validator = Validator::make($input, [
-            'name' => 'required'
+            'name' => 'required',
+            'image' => 'nullable|image|max:2048',
         ]);
    
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-   
-        $category->name = $input['name'];
-        $category->save();
+
+        if ($request->hasFile('image')) {
+            // Optionally delete the old image
+            if ($category->image) {
+                Storage::disk('public')->delete($category->image);
+            }
+    
+            $path = $request->file('image')->store('categories', 'public');
+            $input['image'] = $path;
+        }
+        
+        $category->update($input);
    
         return $this->sendResponse(new CategoryResource($category), 'Category updated successfully.');
     }
