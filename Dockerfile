@@ -23,4 +23,4 @@ RUN composer install \
     && php artisan key:generate
 
 EXPOSE 80
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
+CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=80"]
