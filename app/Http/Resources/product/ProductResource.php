@@ -19,7 +19,7 @@ class ProductResource extends JsonResource
             'name' => $this->name,
             'detail' => $this->detail,
             'price' => $this->price,
-            'category' => $this->category ? $this->category->name : null,
+            'category' => $this->category,
             'likes_count' => $this->likes()->count(),
             'is_liked'    => $this->likes->contains('user_id', auth()->id()),
             'average_rating' => round($this->ratings()->avg('rating'), 1),
