@@ -19,7 +19,7 @@ class ProductListResource extends JsonResource
             'name' => $this->name,
             'detail' => $this->detail,
             'price' => $this->price,
-            'category_name' => $this->category ? $this->category->name : null,
+            'category' => $this->category,
             'likes_count' => $this->likes()->count(),
             'is_liked'    => auth()->check() 
             ? $this->likes()->where('user_id', auth()->id())->exists() 
