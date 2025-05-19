@@ -176,4 +176,12 @@ class ProductController extends BaseController
 
         return response()->json(['message' => 'Product rated successfully.']);
     }
+
+    public function likedProducts(Request $request)
+    {
+        $user = $request->user();
+        
+        $likedProducts = $user->likedProducts()->with('category')->get();
+        return $this->sendResponse(ProductListResource::collection($likedProducts), 'Products retrieved successfully.');
+    }
 }

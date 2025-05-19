@@ -39,6 +39,10 @@ RUN php artisan config:clear \
 # ✅ لو عندك سكريبتات migration وبدك تنفذها تلقائيًا
 RUN php artisan migrate --force
 
+php artisan storage:link 
+
+php artisan db:seed --class=CategoriesTableSeeder
+
 # فتح البورت 80
 EXPOSE 80
 

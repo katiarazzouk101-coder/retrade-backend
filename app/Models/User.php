@@ -66,4 +66,9 @@ class User extends Authenticatable
                     ->withPivot('rating')
                     ->withTimestamps();
     }
+
+    public function likedProducts()
+    {
+        return $this->belongsToMany(Product::class, 'likes', 'user_id', 'product_id')->withTimestamps();
+    }
 }

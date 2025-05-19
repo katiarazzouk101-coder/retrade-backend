@@ -42,3 +42,5 @@ Route::middleware('auth.api:sanctum')->group(function () {
     Route::post('/cart/add', [CartController::class, 'addToCart']);
     Route::delete('/cart/remove/{productId}', [CartController::class, 'removeFromCart']);
 });
+
+Route::middleware('auth.api:sanctum')->get('/user/liked-products', [ProductController::class, 'likedProducts']);
