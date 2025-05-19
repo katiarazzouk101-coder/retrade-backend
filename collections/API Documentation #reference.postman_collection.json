@@ -315,19 +315,45 @@
 								}
 							]
 						},
-						"method": "PUT",
+						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Updated Product Name\",\r\n    \"detail\": \"Updated description\",\r\n    \"price\": 99.99\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Updated Name",
+									"type": "text"
+								},
+								{
+									"key": "detail",
+									"value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "200.30",
+									"type": "text"
+								},
+								{
+									"key": "category_id",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "images[]",
+									"type": "file",
+									"src": "/C:/Users/yamen/OneDrive/Pictures/Screenshots/Screenshot 2025-02-16 122749.png"
 								}
-							}
+							]
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/products/1",
+							"raw": "http://127.0.0.1:8000/api/products/26",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -339,7 +365,7 @@
 							"path": [
 								"api",
 								"products",
-								"1"
+								"26"
 							]
 						}
 					},
@@ -444,6 +470,85 @@
 								"products",
 								"2",
 								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rate Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|V8xVckHmI1FOX1RbIV6BB7V2tJ3NkhJBURwGs2WG27c00798",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "rating",
+									"value": "3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/products/4/rate",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"products",
+								"4",
+								"rate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "liked Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "4|LBhJoGLf6I7VvWw7ZkRMwj4fQmKOxsIOL5bhqdvYf3a0f447",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/user/liked-products",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"liked-products"
 							]
 						}
 					},
