@@ -26,15 +26,15 @@ class CategoriesTableSeeder extends Seeder
             'image' => 'random@example.com',
     ]);
     Category::create([
-            'name' => 'خدمات',
+            'name' => 'البسة',
             'image' => 'random@example.com',
     ]);
     Category::create([
-            'name' => 'وظائف',
+            'name' => 'منظفات',
             'image' => 'random@example.com',
     ]);
     Category::create([
-            'name' => 'حيوانات',
+            'name' => 'طعام',
             'image' => 'random@example.com',
     ]);
     }

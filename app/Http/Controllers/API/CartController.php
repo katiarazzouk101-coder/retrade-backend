@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\CartResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -43,9 +44,7 @@ class CartController extends BaseController
     {
         $cart = auth()->user()->cart()->with('items.product')->first();
 
-        return response()->json([
-            'cart' => $cart
-        ]);
+        return $this->sendResponse(new CartResource($cart), 'Cart retrieved successfully.');
     }
     public function removeFromCart($productId)
     {
