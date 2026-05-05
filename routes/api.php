@@ -6,8 +6,9 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\ProductController;
-use App\Http\Controllers\API\CartController;
+use App\Http\Controllers\ChatBotController;
 
+Route::post('/chat', [ChatBotController::class, 'ask']);
 Route::controller(RegisterController::class)->group(function(){
     Route::post('register', 'register');
     Route::post('login', 'login');

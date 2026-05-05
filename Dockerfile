@@ -47,4 +47,5 @@ RUN php artisan db:seed --class=CategoriesTableSeeder
 EXPOSE 80
 
 # بدء Laravel باستخدام السيرفر الداخلي
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
+#CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
+CMD ["apache2-foreground"]
