@@ -1,2 +1,1 @@
-web: vendor/bin/heroku-php-apache2 public/
-web: php artisan storage:link && vendor/bin/heroku-php-nginx public/
+web: touch database/database.sqlite && php artisan migrate --force && php artisan storage:link && vendor/bin/heroku-php-nginx public/
